@@ -34,8 +34,6 @@ services:
   frontend:
     build:
       context: ./frontend
-    volumes:
-      - './frontend/.env:/usr/app/.env'
     networks:
       - prod
     restart: always
@@ -43,8 +41,6 @@ services:
   backend:
     build:
       context: ./backend
-    volumes:
-      - './backend/.env:/usr/app/.env'
     depends_on:
       postgres_db:
         condition: service_started
