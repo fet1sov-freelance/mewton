@@ -1,16 +1,16 @@
 import convertSvg from '@/assets/convert.png';
 import tonSvg from '@/assets/ton.svg';
 import { BottomTabs } from '@/components/BottomTabs';
-import { TopUpBalance } from '@/components/Dialogs/top-up-balance';
 import { Withdraw } from '@/components/Dialogs/withdraw';
 import { Header } from '@/components/Header';
 import { getBoosts } from '@/lib/helpers/boost';
 import { formatWithSpaces } from '@/lib/helpers/txt';
 import { useUserStore } from '@/lib/store/userStore';
+import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { Clock } from 'lucide-react';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function Boost() {
@@ -19,6 +19,25 @@ export default function Boost() {
   const setBoosts = useUserStore((state) => state.setBoosts);
   const handleBuyBoost = useUserStore((state) => state.handleBuyBoost);
   const { t } = useTranslation();
+  const [tonConnectUI] = useTonConnectUI();
+
+  const buyBoost = (boostId: number, name: string, buyPrice: number) => {
+    if (balance < buyPrice) {
+      const transaction: SendTransactionRequest = {
+        validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes
+        messages: [
+          {
+            address: import.meta.env.VITE_LINKED_WALLET,
+            amount: String(buyPrice * Math.pow(10, 9)),
+          },
+        ],
+      };
+
+      tonConnectUI.sendTransaction(transaction);
+    } else {
+      handleBuyBoost(boostId, name, buyPrice);
+    }
+  }
 
   useEffect(() => {
     (async () => {
@@ -76,7 +95,7 @@ export default function Boost() {
                       !isBoostAvailable && 'bg-disabled',
                       'flex flex-col items-center w-full p-1 text-xs font-bold rounded-lg bg-orange',
                     )}
-                    onClick={handleBuyBoost(item.id, boost.name, boost.buyPrice)}
+                    onClick={event => buyBoost(item.id, boost.name, boost.buyPrice)}
                   >
                     {isBoostAvailable ? (
                       <>
