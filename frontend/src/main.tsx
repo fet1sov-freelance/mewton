@@ -7,7 +7,7 @@ import './index.css';
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
 
 const domain = location.protocol + '//' + location.host;
-const tonConnectManifestSrc = domain + "/ton-manifest.json";
+const tonConnectManifestSrc = domain + "/tonconnect-manifest.json";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
