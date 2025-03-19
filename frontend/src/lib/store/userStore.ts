@@ -3,7 +3,6 @@ import { toast } from 'sonner';
 import { create } from 'zustand';
 import { buyBoost } from '../helpers/boost';
 import { history } from '../utils/history';
-import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react';
 
 interface IUser {
   telegramId: number;

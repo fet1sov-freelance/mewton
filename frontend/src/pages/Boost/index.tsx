@@ -23,7 +23,8 @@ export default function Boost() {
 
   const wallet = useTonWallet();
 
-  const buyBoost = (boostId: number, name: string, buyPrice: number) => {
+  const buyBoost = (event: any, boostId: number, name: string, buyPrice: number) => {
+    event.preventDefault();
     if (balance < buyPrice) {
       const transaction: SendTransactionRequest = {
         validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes
@@ -103,7 +104,7 @@ export default function Boost() {
                       !isBoostAvailable && 'bg-disabled',
                       'flex flex-col items-center w-full p-1 text-xs font-bold rounded-lg bg-orange',
                     )}
-                    onClick={event => buyBoost(item.id, boost.name, boost.buyPrice)}
+                    onClick={event => buyBoost(event, item.id, boost.name, boost.buyPrice)}
                   >
                     {isBoostAvailable ? (
                       <>
