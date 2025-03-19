@@ -2,6 +2,7 @@ import convertSvg from '@/assets/convert.png';
 import tonSvg from '@/assets/ton.svg';
 import { BottomTabs } from '@/components/BottomTabs';
 import { TopUpBalance } from '@/components/Dialogs/top-up-balance';
+import { Withdraw } from '@/components/Dialogs/withdraw';
 import { Header } from '@/components/Header';
 import { getBoosts } from '@/lib/helpers/boost';
 import { formatWithSpaces } from '@/lib/helpers/txt';
@@ -37,7 +38,7 @@ export default function Boost() {
               <img className="w-[40px]" src={tonSvg} alt="" />
               {formatWithSpaces(+balance.toFixed(2))}
             </h1>
-            <TopUpBalance title={t('boost.topUp')} />
+            <Withdraw />
 
             <span className="text-3xl">{t('boost.boost')}</span>
           </div>
@@ -45,12 +46,12 @@ export default function Boost() {
           <div className="grid grid-cols-2 gap-3 w-[95%] mb-32">
             {boosts.map((item) => {
               const { boost, purchasedAt } = item;
-              const isBoostAvailable =
+              let isBoostAvailable =
                 (dayjs().diff(dayjs(purchasedAt), 'hour') >= 12 && boost.isAvailable) 
                 /* || boost.name === 'Loki' */;
 
               if (!item.boost.isAvailable) {
-                return null;
+                isBoostAvailable = false;
               }
 
               return (
