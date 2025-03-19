@@ -6,11 +6,11 @@ import { Header } from '@/components/Header';
 import { getBoosts } from '@/lib/helpers/boost';
 import { formatWithSpaces } from '@/lib/helpers/txt';
 import { useUserStore } from '@/lib/store/userStore';
-import { SendTransactionRequest, useTonConnectUI } from '@tonconnect/ui-react';
+import { SendTransactionRequest, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { Clock } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function Boost() {
@@ -20,6 +20,8 @@ export default function Boost() {
   const handleBuyBoost = useUserStore((state) => state.handleBuyBoost);
   const { t } = useTranslation();
   const [tonConnectUI] = useTonConnectUI();
+
+  const wallet = useTonWallet();
 
   const buyBoost = (boostId: number, name: string, buyPrice: number) => {
     if (balance < buyPrice) {
@@ -32,8 +34,14 @@ export default function Boost() {
           },
         ],
       };
-
-      tonConnectUI.sendTransaction(transaction);
+      
+      
+      if (wallet)
+      {
+        tonConnectUI.sendTransaction(transaction);
+      } else {
+        tonConnectUI.openModal();
+      }
     } else {
       handleBuyBoost(boostId, name, buyPrice);
     }
