@@ -1,6 +1,5 @@
 import tonSvg from '@/assets/ton.svg';
 import { BottomTabs } from '@/components/BottomTabs';
-import { TopUp } from '@/components/Dialogs/top-up';
 import { Withdraw } from '@/components/Dialogs/withdraw';
 import { Header } from '@/components/Header';
 import { formatWithSpaces } from '@/lib/helpers/txt';
@@ -33,7 +32,6 @@ export function Wallet() {
             </div>
           </div>
           <div className="flex flex-col w-2/5 gap-4">
-            <TopUp title={t('wallet.topUp')} />
             <Withdraw />
           </div>
           <div className="w-full h-[3px] bg-gray my-10" />

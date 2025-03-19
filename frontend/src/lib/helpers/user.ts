@@ -3,7 +3,8 @@ import cookie from 'js-cookie';
 import rest from '../services/rest';
 
 export const login = async (data: { telegramId: number; username: string }) => {
-  const res = await axios.post('https://mewtonfarm.com/api/auth', data, {
+  const res = await axios.post('/auth', data, {
+    baseURL: import.meta.env.VITE_BACKEND_API_URL,
     headers: {
       'Content-Type': 'application/json',
     },

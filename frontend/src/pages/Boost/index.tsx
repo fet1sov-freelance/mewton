@@ -1,11 +1,12 @@
 import convertSvg from '@/assets/convert.png';
 import tonSvg from '@/assets/ton.svg';
 import { BottomTabs } from '@/components/BottomTabs';
-import { TopUpBalance } from '@/components/Dialogs/top-up-balance';
+import { Withdraw } from '@/components/Dialogs/withdraw';
 import { Header } from '@/components/Header';
 import { getBoosts } from '@/lib/helpers/boost';
 import { formatWithSpaces } from '@/lib/helpers/txt';
 import { useUserStore } from '@/lib/store/userStore';
+import { SendTransactionRequest, useTonConnectUI, useTonWallet } from '@tonconnect/ui-react';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { Clock } from 'lucide-react';
@@ -18,6 +19,33 @@ export default function Boost() {
   const setBoosts = useUserStore((state) => state.setBoosts);
   const handleBuyBoost = useUserStore((state) => state.handleBuyBoost);
   const { t } = useTranslation();
+  const [tonConnectUI] = useTonConnectUI();
+
+  const wallet = useTonWallet();
+
+  const buyBoost = (boostId: number, name: string, buyPrice: number) => {
+    if (balance < buyPrice) {
+      const transaction: SendTransactionRequest = {
+        validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes
+        messages: [
+          {
+            address: import.meta.env.VITE_LINKED_WALLET,
+            amount: String(buyPrice * Math.pow(10, 9)),
+          },
+        ],
+      };
+      
+      
+      if (wallet)
+      {
+        tonConnectUI.sendTransaction(transaction);
+      } else {
+        tonConnectUI.openModal();
+      }
+    } else {
+      handleBuyBoost(boostId, name, buyPrice);
+    }
+  }
 
   useEffect(() => {
     (async () => {
@@ -37,7 +65,7 @@ export default function Boost() {
               <img className="w-[40px]" src={tonSvg} alt="" />
               {formatWithSpaces(+balance.toFixed(2))}
             </h1>
-            <TopUpBalance title={t('boost.topUp')} />
+            <Withdraw />
 
             <span className="text-3xl">{t('boost.boost')}</span>
           </div>
@@ -45,12 +73,12 @@ export default function Boost() {
           <div className="grid grid-cols-2 gap-3 w-[95%] mb-32">
             {boosts.map((item) => {
               const { boost, purchasedAt } = item;
-              const isBoostAvailable =
+              let isBoostAvailable =
                 (dayjs().diff(dayjs(purchasedAt), 'hour') >= 12 && boost.isAvailable) 
                 /* || boost.name === 'Loki' */;
 
               if (!item.boost.isAvailable) {
-                return null;
+                isBoostAvailable = false;
               }
 
               return (
@@ -75,7 +103,7 @@ export default function Boost() {
                       !isBoostAvailable && 'bg-disabled',
                       'flex flex-col items-center w-full p-1 text-xs font-bold rounded-lg bg-orange',
                     )}
-                    onClick={handleBuyBoost(item.id, boost.name, boost.buyPrice)}
+                    onClick={event => buyBoost(item.id, boost.name, boost.buyPrice)}
                   >
                     {isBoostAvailable ? (
                       <>

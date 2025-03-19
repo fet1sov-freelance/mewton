@@ -35,7 +35,7 @@
     "totalEarned": "Total Earned",
     "topUp": "Top up balance",
     "connectWallet": "Connect wallet",
-    "withdraw": "Withdraw",
+    "withdraw": "Withdraw balance",
     "note": "*all withdrawals are made automatically and are credited to the linked wallet immediately",
     "note2": "**we also take a commission of 3% on the functioning of the ecosystem"
   },

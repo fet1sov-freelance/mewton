@@ -12,7 +12,7 @@ export const Welcome = () => {
         <div className="flex flex-col items-center justify-between flex-1 mt-5">
           <div className="text-center w-[85%]">
             <h3 className="text-2xl font-semibold">
-              Play & Earn <span className="text-orange">TON</span>
+              
             </h3>
             <span className="text-xs font-medium">
               The first p2e game where profits already have their{' '}

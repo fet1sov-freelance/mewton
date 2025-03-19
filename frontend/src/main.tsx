@@ -4,10 +4,16 @@ import App from './App.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import './i18next';
 import './index.css';
+import { TonConnectUIProvider } from '@tonconnect/ui-react';
+
+const domain = location.protocol + '//' + location.host;
+const tonConnectManifestSrc = domain + "/ton-manifest.json";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <TonConnectUIProvider manifestUrl={tonConnectManifestSrc}>
+            { <App /> }
+    </TonConnectUIProvider>
     <Toaster position="top-center" />
   </StrictMode>,
 );
