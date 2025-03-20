@@ -19,9 +19,9 @@ export function useTelegram() {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
       tg.ready();
+      tg.expand();
 
       setTgw(tg);
-
       const initDataUnsafe = tg?.initDataUnsafe;
 
       if (initDataUnsafe?.user) {
