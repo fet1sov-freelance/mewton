@@ -1,14 +1,12 @@
 import tonSvg from '@/assets/ton.svg';
 import { Coin } from '@/components/Coin';
 import { WelcomeBottom } from '@/components/welcome-bottom';
-import { WelcomeHead } from '@/components/welcome-head';
 import { Link } from 'react-router-dom';
 
 export const Welcome = () => {
   return (
     <div className="flex justify-center bg-welcomeBg">
       <div className="flex flex-col w-full h-screen max-w-xl font-bold text-white">
-        <WelcomeHead />
         <div className="flex flex-col items-center justify-between flex-1 mt-5">
           <div className="text-center w-[85%]">
             <h3 className="text-2xl font-semibold">

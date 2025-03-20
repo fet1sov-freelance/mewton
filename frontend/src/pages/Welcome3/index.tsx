@@ -1,6 +1,5 @@
 import tonSvg from '@/assets/ton.svg';
 import { WelcomeBottom } from '@/components/welcome-bottom';
-import { WelcomeHead } from '@/components/welcome-head';
 import { ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -8,7 +7,6 @@ export const ThirdPage = () => {
   return (
     <div className="flex justify-center bg-welcomeBg ">
       <div className="flex flex-col w-full h-screen max-w-xl font-bold text-white">
-        <WelcomeHead />
         <div className="flex flex-col items-center flex-1 gap-16 mt-10">
           <div className="text-center w-[75%]">
             <h3 className="text-2xl font-semibold">
