@@ -1,5 +1,5 @@
 import { useTelegram } from '@/lib/hooks/useTelegram';
-import { useTonConnectUI } from '@tonconnect/ui-react';
+import { useTonConnectUI, useTonWallet } from '@tonconnect/ui-react';
 import { useTranslation } from 'react-i18next';
 
 export const Header = () => {
@@ -7,6 +7,23 @@ export const Header = () => {
   const { t } = useTranslation();
 
   const [tonConnectUI] = useTonConnectUI();
+  
+  const wallet = useTonWallet();
+
+  function WalletInfo()
+  {
+    if (wallet)
+    {
+      return (
+        <p>{wallet.account.address.substring(0, 5) + "..."}</p>
+      );
+    } else {
+      return (
+        <button onClick={() => tonConnectUI.openModal()} className="px-4 py-2 text-xs font-bold bg-primary rounded-xl">{t('Header.connectWallet')}</button>
+      );
+    }
+    
+  }
 
   return (
     <div className="flex items-center justify-between px-4">
@@ -19,7 +36,7 @@ export const Header = () => {
         )}
         <span className="text-xs">{user.username}</span>
       </div>
-      <button onClick={() => tonConnectUI.openModal()} className="px-4 py-2 text-xs font-bold bg-primary rounded-xl">{t('Header.connectWallet')}</button>
+      <WalletInfo></WalletInfo>
     </div>
   );
 };
