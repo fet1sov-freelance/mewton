@@ -13,7 +13,6 @@ import { Clock } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import TonWeb from "tonweb";
 import rest from '../../lib/services/rest';
 
 import { getUser } from '@/lib/helpers/user';
