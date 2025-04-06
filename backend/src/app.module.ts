@@ -10,6 +10,8 @@ import { ReferralsModule } from './referrals/referrals.module';
 import { TasksModule } from './tasks/tasks.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { UserModule } from './users/users.module';
+import { BlockchainController } from './blockchain/blockchain.controller';
+import { BlockchainService } from './blockchain/blockchain.service';
 
 @Module({
   imports: [
@@ -29,5 +31,7 @@ import { UserModule } from './users/users.module';
     BoostsModule,
     BotModule,
   ],
+  controllers: [BlockchainController],
+  providers: [BlockchainService],
 })
 export class AppModule {}

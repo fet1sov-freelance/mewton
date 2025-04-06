@@ -94,5 +94,8 @@
     "fee": "Commission",
     "description": "Will be credited",
     "placeholder": "Enter the amount in TON"
+  },
+  "error": {
+    "tonerror": "Error occured"
   }
 }

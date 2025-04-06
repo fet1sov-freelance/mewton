@@ -12,26 +12,37 @@ import dayjs from 'dayjs';
 import { Clock } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import TonWeb from "tonweb";
 
 export default function Boost() {
+  const usertgId = useUserStore((state) => state.telegramId)
   const balance = useUserStore((state) => state.balance);
   const boosts = useUserStore((state) => state.boosts);
   const setBoosts = useUserStore((state) => state.setBoosts);
   const handleBuyBoost = useUserStore((state) => state.handleBuyBoost);
+  const handleTonTransaction = useUserStore((state) => state.handleTonTransaction);
   const { t } = useTranslation();
   const [tonConnectUI] = useTonConnectUI();
 
   const wallet = useTonWallet();
 
-  const buyBoost = (event: any, boostId: number, name: string, buyPrice: number) => {
+  const buyBoost = async (event: any, boostId: number, name: string, buyPrice: number) => {
     event.preventDefault();
-    if (balance < buyPrice) {
+    if (balance < buyPrice) 
+    {
+      let a = new TonWeb.boc.Cell();
+      a.bits.writeUint(0, 32);
+      a.bits.writeString(`${usertgId}`);
+      let payload = TonWeb.utils.bytesToBase64(await a.toBoc());
+
       const transaction: SendTransactionRequest = {
         validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes
         messages: [
           {
             address: import.meta.env.VITE_LINKED_WALLET,
             amount: String(buyPrice * Math.pow(10, 9)),
+            payload: payload
           },
         ],
       };
@@ -39,12 +50,18 @@ export default function Boost() {
       
       if (wallet)
       {
-        tonConnectUI.sendTransaction(transaction);
+        const result = await tonConnectUI.sendTransaction(transaction);
+        if (result.boc)
+        {
+          await handleTonTransaction();
+        } else {
+          toast(t("error.tonerror"))
+        }
       } else {
         tonConnectUI.openModal();
       }
     } else {
-      handleBuyBoost(boostId, name, buyPrice);
+      await handleBuyBoost(boostId, name, buyPrice);
     }
   }
 

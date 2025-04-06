@@ -1,0 +1,95 @@
+import { Injectable } from '@nestjs/common';
+import axios from "axios";
+import { PrismaService } from 'src/prisma/prisma.service';
+
+@Injectable()
+export class BlockchainService 
+{
+    constructor(
+        private prisma: PrismaService,
+      ) {}
+
+    async getTransactions(address: string): Promise<any> {
+        const url = "https://toncenter.com/api/v2/getTransactions";
+        const params = {
+            address: address,
+            limit: 10,
+            to_lt: 0,
+            archival: true,
+            api_key: process.env.TON_CENTER_API_KEY
+        };
+
+        const headers = {
+            "accept": "application/json",
+            "X-API-Key": process.env.TON_CENTER_API_KEY
+        };
+
+        try {
+            const response = await axios.get(url, { headers, params });
+            return response.data;
+        } catch (error) {
+            console.error("Ошибка при получении транзакций:", error);
+            throw error;
+        }
+    }
+
+    decodeComment(msg_data: any): string {
+        if (!msg_data) return "";
+
+        const msgType = msg_data["@type"] || "";
+        if (msgType === "msg.dataText") {
+            const textB64: string = msg_data["text"] || "";
+            try {
+                return Buffer.from(textB64, "base64").toString("utf-8");
+            } catch (error) {
+                return textB64;
+            }
+        } else {
+            return "";
+        }
+    }
+
+    extractTransactionInfo(tx: any): { time_str: string; sender: string; value: string; comment: string } {
+        const utime = tx["utime"];
+        let time_str = "неизвестно";
+        if (utime) {
+            time_str = new Date(utime * 1000).toISOString().replace("T", " ").split(".")[0];
+        }
+
+        const in_msg = tx["in_msg"] || {};
+        const sender = in_msg["source"] || "неизвестно";
+        const value = in_msg["value"] || "0";
+        const msg_data = in_msg["msg_data"] || {};
+        const comment = this.decodeComment(msg_data);
+
+        return { time_str, sender, value, comment };
+    }
+
+    async checkTransaction(telegramId: bigint): Promise<void> {
+        try {
+            const transactions = await this.getTransactions(process.env.TON_CENTER_WALLET);
+            if (transactions.ok && transactions.result) {
+                for (const tx of transactions.result) {
+                    const { time_str, sender, value, comment } = this.extractTransactionInfo(tx);
+                    console.log(`TON TRANSACTION ${time_str} -> ${sender}`)
+
+                    if (
+                        comment &&
+                        comment == String(telegramId))
+                    {
+                        this.prisma.user.update({
+                            where: { id: Number(telegramId) },
+                            data: {
+                              balance: { increment: Number(value) },
+                            },
+                        });
+                    }
+                }
+            } else {
+                console.log("Ошибка получения транзакций или пустой результат");
+            }
+        } catch (error) {
+            console.error("Ошибка в main:", error);
+        }
+    }
+}

@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { create } from 'zustand';
 import { buyBoost } from '../helpers/boost';
 import { history } from '../utils/history';
+import rest from '../services/rest';
 
 interface IUser {
   telegramId: number;
@@ -49,6 +50,7 @@ interface UserInterface {
   setIsLoading: (isLoading: boolean) => void;
   setBoosts: (boosts: UserBoosts[]) => void;
   handleBuyBoost: (boostId: number, name: string, buyPrice: number) => () => void;
+  handleTonTransaction: () => () => void;
 }
 
 export const useUserStore = create<UserInterface>((set) => ({
@@ -138,4 +140,8 @@ export const useUserStore = create<UserInterface>((set) => ({
 
     toast(`Successfully! You bought "${name}"`);
   },
+  handleTonTransaction: () => async () => {
+    const res = await rest.get(`/blockchain/transaction`);
+    return res.data;
+  }
 }));
