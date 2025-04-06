@@ -19,7 +19,10 @@ import { getUser } from '@/lib/helpers/user';
 import { buyBoost } from '../../lib/helpers/boost';
 import { history } from '../../lib/utils/history';
 
+import { Buffer } from 'buffer';
+
 export default function Boost() {
+  const userTGId = useUserStore((state) => state.telegramId);
   const balance = useUserStore((state) => state.balance);
   const boosts = useUserStore((state) => state.boosts);
   const setBoosts = useUserStore((state) => state.setBoosts);
@@ -32,12 +35,6 @@ export default function Boost() {
   const buyClickBoost = async (event: any, boostId: number, name: string, buyPrice: number) => {
     event.preventDefault();
     if (balance < buyPrice) {
-      /*
-      let a = new TonWeb.boc.Cell();
-      a.bits.writeUint(0, 32);
-      a.bits.writeString(`${usertgId}`);
-      let payload = TonWeb.utils.bytesToBase64(await a.toBoc());
-      */
 
       const transaction: SendTransactionRequest = {
         validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes
@@ -45,6 +42,7 @@ export default function Boost() {
           {
             address: import.meta.env.VITE_LINKED_WALLET,
             amount: String(buyPrice * Math.pow(10, 9)),
+            payload: Buffer.from(String(userTGId), 'binary').toString('base64')
           },
         ],
       };
