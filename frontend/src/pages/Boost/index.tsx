@@ -38,7 +38,7 @@ export default function Boost() {
 
       let a = new TonWeb.boc.Cell();
       a.bits.writeUint(0, 32);
-      a.bits.writeString("TON Connect 2 tutorial!");
+      a.bits.writeString(String(userTGId));
       let payload = TonWeb.utils.bytesToBase64(await a.toBoc());
 
       const transaction: SendTransactionRequest = {
