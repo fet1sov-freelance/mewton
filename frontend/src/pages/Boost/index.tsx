@@ -14,27 +14,31 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import TonWeb from "tonweb";
+import rest from '../../lib/services/rest';
+
+import { getUser } from '@/lib/helpers/user';
+import { buyBoost } from '../../lib/helpers/boost';
+import { history } from '../../lib/utils/history';
 
 export default function Boost() {
-  const usertgId = useUserStore((state) => state.telegramId)
   const balance = useUserStore((state) => state.balance);
   const boosts = useUserStore((state) => state.boosts);
   const setBoosts = useUserStore((state) => state.setBoosts);
-  const handleBuyBoost = useUserStore((state) => state.handleBuyBoost);
-  const handleTonTransaction = useUserStore((state) => state.handleTonTransaction);
+
   const { t } = useTranslation();
   const [tonConnectUI] = useTonConnectUI();
 
   const wallet = useTonWallet();
 
-  const buyBoost = async (event: any, boostId: number, name: string, buyPrice: number) => {
+  const buyClickBoost = async (event: any, boostId: number, name: string, buyPrice: number) => {
     event.preventDefault();
-    if (balance < buyPrice) 
-    {
+    if (balance < buyPrice) {
+      /*
       let a = new TonWeb.boc.Cell();
       a.bits.writeUint(0, 32);
       a.bits.writeString(`${usertgId}`);
       let payload = TonWeb.utils.bytesToBase64(await a.toBoc());
+      */
 
       const transaction: SendTransactionRequest = {
         validUntil: Date.now() + 5 * 60 * 1000, // 5 minutes
@@ -42,18 +46,14 @@ export default function Boost() {
           {
             address: import.meta.env.VITE_LINKED_WALLET,
             amount: String(buyPrice * Math.pow(10, 9)),
-            payload: payload
           },
         ],
       };
-      
-      
-      if (wallet)
-      {
+
+      if (wallet) {
         const result = await tonConnectUI.sendTransaction(transaction);
-        if (result.boc)
-        {
-          await handleTonTransaction();
+        if (result.boc) {
+          await rest.get(`/blockchain/transaction`);
         } else {
           toast(t("error.tonerror"))
         }
@@ -61,7 +61,31 @@ export default function Boost() {
         tonConnectUI.openModal();
       }
     } else {
-      await handleBuyBoost(boostId, name, buyPrice);
+      const { balance } = useUserStore.getState();
+      if (buyPrice > balance && name !== 'Loki') {
+        history.push('/wallet');
+        toast('Not enough balance');
+        return;
+      }
+      const res = await buyBoost(boostId);
+
+      if (res.status == 500) {
+        history.push('/wallet');
+        toast('Not enough balance');
+        return;
+      }
+
+      const userData = await getUser();
+
+      useUserStore.setState({
+        boosts: res.data.boosts,
+        balance: userData.balance,
+        points: userData.points,
+        totalEarned: userData.totalEarned,
+        catsBought: userData.catsBought,
+      });
+
+      toast(`Successfully! You bought "${name}"`);
     }
   }
 
@@ -121,7 +145,7 @@ export default function Boost() {
                       !isBoostAvailable && 'bg-disabled',
                       'flex flex-col items-center w-full p-1 text-xs font-bold rounded-lg bg-orange',
                     )}
-                    onClick={event => buyBoost(event, item.id, boost.name, boost.buyPrice)}
+                    onClick={event => buyClickBoost(event, item.id, boost.name, boost.buyPrice)}
                   >
                     {isBoostAvailable ? (
                       <>
