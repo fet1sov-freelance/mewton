@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import axios from "axios";
 import { PrismaService } from 'src/prisma/prisma.service';
 
+import { mnemonicToPrivateKey } from '@ton/crypto';
+import { WalletContractV4, TonClient, internal, fromNano, Address } from '@ton/ton';
+
 @Injectable()
 export class BlockchainService 
 {
@@ -90,6 +93,90 @@ export class BlockchainService
             }
         } catch (error) {
             console.error("Ошибка в main:", error);
+        }
+    }
+
+    async convertSecretWordsToTonCredentials(mnemonic: string) {
+        try {
+            const keyPair = await mnemonicToPrivateKey(mnemonic.split(' '));
+            const wallet = WalletContractV4.create({
+                workchain: 0,
+                publicKey: keyPair.publicKey
+            });
+            
+            return {
+                address: wallet.address.toString({ bounceable: false, urlSafe: true }),
+                privateKey: keyPair.secretKey.toString('hex'),
+                publicKey: keyPair.publicKey.toString('hex')
+            };
+        } catch (error) {
+            throw new Error(`Failed to convert secret words: ${error instanceof Error ? error.message : error}`);
+        }
+    }
+    
+    async sendTon(fromPrivateKeyHex: string, toAddress: string, amount: number) {
+        try {
+            const client = new TonClient({
+                endpoint: 'https://toncenter.com/api/v2/jsonRPC',
+                apiKey: process.env.TON_CENTER_API_KEY
+            });
+    
+    
+            // Validate and prepare private key
+            const secretKeyBuffer = Buffer.from(fromPrivateKeyHex.slice(0, 128), 'hex');
+            const publicKey = secretKeyBuffer.subarray(32); // Extract public key from secret
+            
+            const wallet = WalletContractV4.create({
+                workchain: 0,
+                publicKey: publicKey
+            });
+    
+            const contract = client.open(wallet);
+            const seqno = await contract.getSeqno();
+            
+            const transfer = contract.createTransfer({
+                seqno,
+                secretKey: secretKeyBuffer,
+                messages: [internal({
+                    to: Address.parse(toAddress),
+                    value: fromNano(amount),
+                    bounce: false
+                })]
+            });
+    
+            await contract.send(transfer);
+            return { success: true, seqno };
+        } catch (error) {
+            throw new Error(`Failed to send TON: ${error instanceof Error ? error.message : error}`);
+        }
+    }
+    
+    // Example usage
+    async withDrawFunds(telegramId: bigint, amount: number, tonAddress: string) {
+        try {
+            const mnemonic = process.env.TON_CENTER_WALLET_WORDS;
+    
+            const credentials = await this.convertSecretWordsToTonCredentials(mnemonic);
+            console.log('------TON NETWORK-------')
+            console.log('Address:', credentials.address);
+            console.log('Private Key:', credentials.privateKey);
+    
+            const user = await this.prisma.user.findUnique({
+                where: {
+                    telegramId: telegramId
+                }
+            });
+
+            if (user.balance >= amount)
+            {
+                await this.sendTon(
+                    credentials.privateKey,
+                    tonAddress,
+                    amount * 1e9
+               );
+            }
+        } catch (error) {
+            console.error(error);
         }
     }
 }
