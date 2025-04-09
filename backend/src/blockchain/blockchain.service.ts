@@ -22,7 +22,6 @@ export class BlockchainService
         };
 
         const headers = {
-            "accept": "application/json",
             "X-API-Key": process.env.TON_CENTER_API_KEY
         };
 
