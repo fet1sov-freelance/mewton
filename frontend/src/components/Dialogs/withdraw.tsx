@@ -1,8 +1,26 @@
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import rest from '@/lib/services/rest';
+import { useTonWallet } from '@tonconnect/ui-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const Withdraw = () => {
   const { t } = useTranslation();
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputChange = (e: any) => {
+    setInputValue(e.target.value);
+  }
+
+  const wallet = useTonWallet();
+
+  const withdrawFunds = async (event: any) => {
+      await rest.post("", {
+        amount: inputValue,
+        address: wallet?.account.address
+      });
+  };
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -17,9 +35,11 @@ export const Withdraw = () => {
           <input
             type="number"
             placeholder={t('modals.placeholder')}
+            value={inputValue}
+            onChange={handleInputChange}
             className="w-full px-3 py-1 font-normal rounded-md bg-gray focus:outline-none"
           />
-          <button className="w-full p-1 text-base font-semibold rounded-lg bg-orange">
+          <button onClick={event => withdrawFunds(event)} className="w-full p-1 text-base font-semibold rounded-lg bg-orange">
             {t('wallet.withdraw')}
           </button>
         </div>

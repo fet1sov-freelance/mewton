@@ -151,7 +151,6 @@ export class BlockchainService
         }
     }
     
-    // Example usage
     async withDrawFunds(telegramId: bigint, amount: number, tonAddress: string) {
         try {
             const mnemonic = process.env.TON_CENTER_WALLET_WORDS;
