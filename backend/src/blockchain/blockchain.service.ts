@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import axios from "axios";
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -19,7 +19,6 @@ export class BlockchainService
             limit: 10,
             to_lt: 0,
             archival: true,
-            api_key: process.env.TON_CENTER_API_KEY
         };
 
         const headers = {
@@ -68,14 +67,13 @@ export class BlockchainService
         return { time_str, sender, value, comment };
     }
 
-    async checkTransaction(telegramId: bigint): Promise<void> {
+    async checkTransaction(telegramId: bigint): Promise<any> {
         try {
             const transactions = await this.getTransactions(process.env.TON_CENTER_WALLET);
             if (transactions.ok && transactions.result) {
                 for (const tx of transactions.result) {
                     const { time_str, sender, value, comment } = this.extractTransactionInfo(tx);
-                    console.log(`TON TRANSACTION ${time_str} -> ${sender}`)
-
+                    
                     if (
                         comment &&
                         comment == String(telegramId))
@@ -87,12 +85,16 @@ export class BlockchainService
                             },
                         });
                     }
+
+                    return {
+                        message: `TON TRANSACTION ${time_str} -> ${sender}`
+                    }
                 }
             } else {
-                console.log("Ошибка получения транзакций или пустой результат");
+                throw new ForbiddenException("Ошибка получения транзакций или пустой результат");
             }
         } catch (error) {
-            console.error("Ошибка в main:", error);
+            throw new ForbiddenException(error);
         }
     }
 
