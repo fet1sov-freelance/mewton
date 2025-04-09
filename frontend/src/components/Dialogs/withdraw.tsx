@@ -15,7 +15,7 @@ export const Withdraw = () => {
   const wallet = useTonWallet();
 
   const withdrawFunds = async (event: any) => {
-      await rest.post("", {
+      await rest.post("/blockchain/withdraw", {
         amount: inputValue,
         address: wallet?.account.address
       });
