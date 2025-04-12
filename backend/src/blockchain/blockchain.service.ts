@@ -83,11 +83,13 @@ export class BlockchainService
                               balance: { increment: Number(value) },
                             },
                         });
+
+                        return {
+                            message: `TON TRANSACTION ${time_str} -> ${sender} for ${telegramId} | AMOUNT: ${value}`
+                        }
                     }
 
-                    return {
-                        message: `TON TRANSACTION ${time_str} -> ${sender} for ${telegramId} | AMOUNT: ${value}`
-                    }
+                    continue;
                 }
             } else {
                 throw new ForbiddenException("Ошибка получения транзакций или пустой результат");
