@@ -17,7 +17,7 @@ export const Header = () => {
       return (
         <div className='flex flex-row'>
           <p>{wallet.account.address.substring(0, 5) + "..."}</p>
-          <button className='bg-primary rounded-xl' onClick={() => tonConnectUI.disconnect()}>{'-'}</button>
+          <button className='bg-[red] py-[10px] rounded-xl' onClick={() => tonConnectUI.disconnect()}>{'-'}</button>
         </div>
       );
     } else {
