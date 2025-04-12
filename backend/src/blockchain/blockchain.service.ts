@@ -77,8 +77,8 @@ export class BlockchainService
                         comment &&
                         comment == String(telegramId))
                     {
-                        this.prisma.user.update({
-                            where: { telegramId: Number(telegramId) },
+                        await this.prisma.user.update({
+                            where: { telegramId: telegramId },
                             data: {
                               balance: { increment: Number(value) },
                             },
