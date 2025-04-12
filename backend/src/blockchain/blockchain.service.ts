@@ -175,7 +175,13 @@ export class BlockchainService
                     credentials.privateKey,
                     tonAddress,
                     amount * 1e9
-               );
+                );
+
+                await this.prisma.user.findUnique({
+                    where: {
+                        telegramId: telegramId
+                    },
+                });
             }
         } catch (error) {
             console.error(error);
