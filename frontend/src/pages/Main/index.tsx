@@ -5,7 +5,6 @@ import tonSvg from '@/assets/ton.svg';
 import { BottomTabs } from '@/components/BottomTabs';
 import { Coin } from '@/components/Coin';
 import { Header } from '@/components/Header';
-import { Splash } from '@/components/Splash';
 import { formatWithSpaces } from '@/lib/helpers/txt';
 import { syncPoints } from '@/lib/helpers/user';
 import { useUserStore } from '@/lib/store/userStore';
@@ -18,7 +17,6 @@ export const Main = () => {
   const totalEarned = useUserStore((state) => state.totalEarned);
   const balance = useUserStore((state) => state.balance);
   const catsBought = useUserStore((state) => state.catsBought);
-  const IsLoading = useUserStore((state) => state.isLoading);
   const setPoints = useUserStore((state) => state.setPoints);
   const setEnergy = useUserStore((state) => state.setEnergy);
   const energys = useUserStore((state) => state.energy);

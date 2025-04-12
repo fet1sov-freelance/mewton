@@ -9,6 +9,7 @@
     "connectWallet": "Connect Wallet"
   },
   "ton": "Withdraw request successfully sent",
+  "tonerror": "Not enough balance",
   "boost": {
     "boost": "Boost",
     "buy": "Buy",

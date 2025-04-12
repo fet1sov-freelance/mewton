@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import rest from '@/lib/services/rest';
+import { useUserStore } from '@/lib/store/userStore';
 import { useTonWallet } from '@tonconnect/ui-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +10,8 @@ export const Withdraw = () => {
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
 
+  const balance = useUserStore((state) => state.balance);
+
   const handleInputChange = (e: any) => {
     setInputValue(e.target.value);
   }
@@ -17,12 +20,19 @@ export const Withdraw = () => {
 
   const withdrawFunds = async (event: any) => {
       event.preventDefault();
-      await rest.post("/blockchain/withdraw", {
-        amount: inputValue,
-        address: wallet?.account.address
-      });
 
-      toast(t('ton'));
+      if (balance >= Number(inputValue))
+      {
+        await rest.post("/blockchain/withdraw", {
+          amount: inputValue,
+          address: wallet?.account.address
+        });
+  
+        toast(t('ton'));
+      } else {
+        toast(t('tonerror'));
+      }
+      
   };
 
   return (
