@@ -86,7 +86,7 @@ export class BlockchainService
                     }
 
                     return {
-                        message: `TON TRANSACTION ${time_str} -> ${sender}`
+                        message: `TON TRANSACTION ${time_str} -> ${sender} for ${telegramId} | AMOUNT: ${value}`
                     }
                 }
             } else {
