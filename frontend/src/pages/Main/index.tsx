@@ -55,10 +55,6 @@ export const Main = () => {
     setClicks((prevClicks) => prevClicks.filter((click) => click.id !== id));
   };
 
-  if (IsLoading) {
-    return <Splash />;
-  }
-
   return (
     <div className="flex justify-center overflow-hidden">
       <div className="relative flex flex-col w-full max-w-xl max-h-screen py-5 font-bold text-white">
