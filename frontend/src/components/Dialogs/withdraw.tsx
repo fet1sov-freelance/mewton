@@ -3,6 +3,7 @@ import rest from '@/lib/services/rest';
 import { useTonWallet } from '@tonconnect/ui-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 export const Withdraw = () => {
   const { t } = useTranslation();
@@ -20,6 +21,8 @@ export const Withdraw = () => {
         amount: inputValue,
         address: wallet?.account.address
       });
+
+      toast(t('ton'));
   };
 
   return (

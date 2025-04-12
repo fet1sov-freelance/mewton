@@ -8,6 +8,7 @@
     "userAvatar": "User Avatar",
     "connectWallet": "Connect Wallet"
   },
+  "ton": "Withdraw request successfully sent",
   "boost": {
     "boost": "Boost",
     "buy": "Buy",
