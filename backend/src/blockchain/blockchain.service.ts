@@ -80,7 +80,7 @@ export class BlockchainService
                         await this.prisma.user.update({
                             where: { telegramId: telegramId },
                             data: {
-                              balance: { increment: Number(fromNano(Number(value)))},
+                              balance: { increment: Number(value)},
                             },
                         });
 
