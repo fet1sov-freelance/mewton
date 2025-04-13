@@ -179,10 +179,13 @@ export class BlockchainService
                     amount * 1e9
                 );
 
-                await this.prisma.user.findUnique({
+                await this.prisma.user.update({
                     where: {
                         telegramId: telegramId
                     },
+                    data: {
+                        balance: { decrement: amount * 1e9 },
+                    }
                 });
             }
         } catch (error) {
