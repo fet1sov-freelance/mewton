@@ -20,8 +20,9 @@ export const Withdraw = () => {
 
   const withdrawFunds = async (event: any) => {
       event.preventDefault();
-
-      if (balance >= Number(inputValue))
+      
+      if (balance >= Number(inputValue) 
+        && Number(inputValue) > 0)
       {
         await rest.post("/blockchain/withdraw", {
           amount: inputValue,
