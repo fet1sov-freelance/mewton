@@ -72,11 +72,13 @@ export class BlockchainService
             if (transactions.ok && transactions.result) {
                 for (const tx of transactions.result) {
                     const { time_str, sender, value, comment } = this.extractTransactionInfo(tx);
-                    
+
                     if (
                         comment &&
                         comment == String(telegramId))
                     {
+                        console.log(`TON TRANSACTION ${time_str} -> ${sender} for ${telegramId} | AMOUNT: ${value}`);
+
                         await this.prisma.user.update({
                             where: { telegramId: telegramId },
                             data: {
