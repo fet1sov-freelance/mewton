@@ -16,7 +16,7 @@ export class BlockchainService
         const url = "https://toncenter.com/api/v2/getTransactions";
         const params = {
             address: address,
-            limit: 5,
+            limit: 3,
             to_lt: 0,
             archival: true,
         };
@@ -72,8 +72,6 @@ export class BlockchainService
             if (transactions.ok && transactions.result) {
                 for (const tx of transactions.result) {
                     const { time_str, sender, value, comment } = this.extractTransactionInfo(tx);
-
-                    console.log(`TON TRANSACTION ${time_str} -> ${sender} for ${telegramId} | AMOUNT: ${value}`);
 
                     if (
                         comment &&

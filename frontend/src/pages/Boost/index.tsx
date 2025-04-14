@@ -25,6 +25,7 @@ export default function Boost() {
   const userTGId = useUserStore((state) => state.telegramId);
   const balance = useUserStore((state) => state.balance);
   const boosts = useUserStore((state) => state.boosts);
+  const syncUserData = useUserStore((state) => state.syncUserData);
   const setBoosts = useUserStore((state) => state.setBoosts);
 
   const { t } = useTranslation();
@@ -56,6 +57,7 @@ export default function Boost() {
         const result = await tonConnectUI.sendTransaction(transaction);
         if (result.boc) {
           await rest.get(`/blockchain/transaction`);
+          syncUserData();
         } else {
           toast(t("error.tonerror"))
         }
