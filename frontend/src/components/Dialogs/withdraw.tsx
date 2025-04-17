@@ -14,8 +14,7 @@ export const Withdraw = () => {
 
   const handleInputChange = (e: any) => {
     if (e.target.value > 0
-        && e.target.value != 0
-    )
+        && e.target.value != 0)
     {
       setInputValue(e.target.value);
     }
@@ -26,11 +25,12 @@ export const Withdraw = () => {
   const withdrawFunds = async (event: any) => {
       event.preventDefault();
       
-      if (balance >= Number(inputValue) 
+      if (balance >= Number(inputValue)
+        && Number(inputValue) > 0.1
         && Number(inputValue) > 0)
       {
         await rest.post("/blockchain/withdraw", {
-          amount: inputValue,
+          amount: Number(inputValue),
           address: wallet?.account.address
         });
   
@@ -55,7 +55,7 @@ export const Withdraw = () => {
           <input
             type="number"
             placeholder={t('modals.placeholder')}
-            value={inputValue}
+            value={Math.abs(Number(inputValue))}
             min="0.1"
             onChange={handleInputChange}
             className="w-full px-3 py-1 font-normal rounded-md bg-gray focus:outline-none"
