@@ -171,6 +171,7 @@ export class BlockchainService
 
             if (
                 user.balance != 0 &&
+                amount >= 0.1 &&
                 user.balance >= amount)
             {
                 await this.sendTon(
