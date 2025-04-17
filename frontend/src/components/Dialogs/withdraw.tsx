@@ -14,8 +14,7 @@ export const Withdraw = () => {
   const balance = useUserStore((state) => state.balance);
 
   const handleInputChange = (e: any) => {
-    if (e.target.value > 0
-        && e.target.value != 0)
+    if (e.target.value >= 0.1)
     {
       setInputValue(e.target.value);
     }
