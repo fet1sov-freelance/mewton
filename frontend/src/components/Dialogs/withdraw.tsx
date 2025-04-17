@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 export const Withdraw = () => {
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
+  const syncUserData = useUserStore((state) => state.syncUserData);
 
   const balance = useUserStore((state) => state.balance);
 
@@ -33,6 +34,8 @@ export const Withdraw = () => {
           amount: Number(inputValue),
           address: wallet?.account.address
         });
+
+        syncUserData();
   
         toast(t('ton'));
       } else {
@@ -55,7 +58,7 @@ export const Withdraw = () => {
           <input
             type="number"
             placeholder={t('modals.placeholder')}
-            value={Math.abs(Number(inputValue))}
+            value={inputValue}
             min="0.1"
             onChange={handleInputChange}
             className="w-full px-3 py-1 font-normal rounded-md bg-gray focus:outline-none"
