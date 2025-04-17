@@ -26,7 +26,7 @@ export const Withdraw = () => {
       event.preventDefault();
       
       if (balance >= Number(inputValue)
-        && Number(inputValue) > 0.1
+        && Number(inputValue) >= 0.1
         && Number(inputValue) > 0)
       {
         await rest.post("/blockchain/withdraw", {
