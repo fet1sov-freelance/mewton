@@ -51,7 +51,7 @@ export const Withdraw = () => {
             type="number"
             placeholder={t('modals.placeholder')}
             value={inputValue}
-            min={0.1}
+            min="0.1"
             onChange={handleInputChange}
             className="w-full px-3 py-1 font-normal rounded-md bg-gray focus:outline-none"
           />
