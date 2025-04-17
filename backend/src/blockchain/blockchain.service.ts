@@ -169,7 +169,9 @@ export class BlockchainService
                 }
             });
 
-            if (user.balance >= amount)
+            if (
+                user.balance != 0 &&
+                user.balance >= amount)
             {
                 await this.sendTon(
                     credentials.privateKey,
@@ -182,7 +184,7 @@ export class BlockchainService
                         telegramId: telegramId
                     },
                     data: {
-                        balance: { decrement: amount * 1e9 },
+                        balance: { decrement: amount },
                     }
                 });
             }
