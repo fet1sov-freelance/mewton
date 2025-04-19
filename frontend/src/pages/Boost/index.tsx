@@ -47,7 +47,7 @@ export default function Boost() {
         messages: [
           {
             address: import.meta.env.VITE_LINKED_WALLET,
-            amount: String(buyPrice * 10e9),
+            amount: String(Number(buyPrice * 10e9)),
             payload: payload
           }
         ],

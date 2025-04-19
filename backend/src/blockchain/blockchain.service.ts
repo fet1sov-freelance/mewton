@@ -50,20 +50,21 @@ export class BlockchainService
         }
     }
 
-    extractTransactionInfo(tx: any): { time_str: string; sender: string; value: string; comment: string } {
+    extractTransactionInfo(tx: any): { time_str: string; sender: string; value: string; comment: string, fee: Number } {
         const utime = tx["utime"];
         let time_str = "неизвестно";
         if (utime) {
             time_str = new Date(utime * 1000).toISOString().replace("T", " ").split(".")[0];
         }
 
+        const fee = Number(tx["fee"]) || 0;
         const in_msg = tx["in_msg"] || {};
         const sender = in_msg["source"] || "неизвестно";
         const value = in_msg["value"] || "0";
         const msg_data = in_msg["msg_data"] || {};
         const comment = this.decodeComment(msg_data);
 
-        return { time_str, sender, value, comment };
+        return { time_str, sender, value, comment, fee };
     }
 
     async checkTransaction(telegramId: bigint): Promise<any> {
@@ -71,7 +72,7 @@ export class BlockchainService
             const transactions = await this.getTransactions(process.env.TON_CENTER_WALLET);
             if (transactions.ok && transactions.result) {
                 for (const tx of transactions.result) {
-                    const { time_str, sender, value, comment } = this.extractTransactionInfo(tx);
+                    const { time_str, sender, value, comment, fee } = this.extractTransactionInfo(tx);
 
                     if (
                         comment &&
@@ -80,7 +81,7 @@ export class BlockchainService
                         await this.prisma.user.update({
                             where: { telegramId: telegramId },
                             data: {
-                              balance: { increment: Number(value) / 1e9 },
+                              balance: { increment: (Number(value) + Number(fee)) / 1e9 },
                             },
                         });
 
