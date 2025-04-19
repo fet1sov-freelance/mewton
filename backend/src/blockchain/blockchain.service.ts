@@ -16,7 +16,7 @@ export class BlockchainService
         const url = "https://toncenter.com/api/v2/getTransactions";
         const params = {
             address: address,
-            limit: 3,
+            limit: 1,
             to_lt: 0,
             archival: true,
         };
@@ -174,20 +174,23 @@ export class BlockchainService
                 amount >= 0.1 &&
                 user.balance >= amount)
             {
-                await this.sendTon(
+                const response = await this.sendTon(
                     credentials.privateKey,
                     tonAddress,
                     amount * 1e9
                 );
 
-                await this.prisma.user.update({
-                    where: {
-                        telegramId: telegramId
-                    },
-                    data: {
-                        balance: { decrement: amount },
-                    }
-                });
+                if (response.success)
+                {
+                    await this.prisma.user.update({
+                        where: {
+                            telegramId: telegramId
+                        },
+                        data: {
+                            balance: { decrement: amount },
+                        }
+                    });
+                }
             }
         } catch (error) {
             console.error(error);
