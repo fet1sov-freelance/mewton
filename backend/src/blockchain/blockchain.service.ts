@@ -16,7 +16,7 @@ export class BlockchainService
         const url = "https://toncenter.com/api/v2/getTransactions";
         const params = {
             address: address,
-            limit: 1,
+            limit: 2,
             to_lt: 0,
             archival: true,
         };
